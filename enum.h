@@ -119,7 +119,8 @@
  * @pre @ref ENUM_IMPL declaration must be visible in the context.
  *
  * @note No closing semi-colon.
- * @bug If a multiple enum entries have the same constant value, the name of the first one will be printed.
+ * @bug If multiple enum entries have the same constant value, the name of the
+ *      first one will be printed.
  *
  * @code
  * ENUM_IMPL(SHAPE_POINTS);
