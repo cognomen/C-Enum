@@ -49,4 +49,4 @@ docs:
 	$(DOXYGEN) Doxyfile
 
 clean:
-	@-$(RM) $(COBJS) $(CPREPS) $(PROJ) doc
+	@-$(RM) -rf $(COBJS) $(CPREPS) $(PROJ) doc
