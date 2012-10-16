@@ -1,25 +1,41 @@
+/*
+ * Enum property and iterator function examples.
+ *
+ * @author mark AT cognomen DOT co DOT uk
+ *
+ * @copyright Dedicated to the public domain. Use it as you wish.
+ */
 #ifndef ID_H
 #define ID_H
 
 #include "enum.h"
 
-#define EXT_ID(_, _V) \
-    _V(EXT_ID_0, 0) \
-    _(EXT_ID_GROUP1_START) \
-    _V(EXT_ID_GROUP1_0, EXT_ID_GROUP1_START) \
-    _(EXT_ID_GROUP1_1) \
-    _(EXT_ID_GROUP1_2) \
-    _(EXT_ID_GROUP1_3) \
-    _V(EXT_ID_GROUP1_666, 666) \
-    _(EXT_ID_MAX) \
+#define HEX(_, _V) \
+    _V(HEX_0, '0') \
+    _(HEX_1) \
+    _(HEX_2) \
+    _(HEX_3) \
+    _(HEX_4) \
+    _(HEX_5) \
+    _(HEX_6) \
+    _(HEX_7) \
+    _(HEX_8) \
+    _(HEX_9) \
+    _V(HEX_A, 'A') \
+    _(HEX_B) \
+    _(HEX_C) \
+    _(HEX_D) \
+    _(HEX_E) \
+    _(HEX_F) \
+    _V(HEX_MAX, HEX_F) \
 
-ENUM(EXT_ID);
+ENUM(HEX);
 
-ENUM_DECLARE_TOSTRING(EXT_ID, ExtId_ToString);
-ENUM_DECLARE_ITERATOR(EXT_ID,
-                      ExtId_IteratorBegin,
-                      ExtId_IteratorEnd,
-                      ExtId_IteratorToValue);
+ENUM_DECLARE_TOSTRING(HEX, Hex_ToString);
+ENUM_DECLARE_ITERATOR(HEX,
+                      Hex_IteratorBegin,
+                      Hex_IteratorEnd,
+                      Hex_IteratorToValue);
 
 #endif  /* ID_H */
 

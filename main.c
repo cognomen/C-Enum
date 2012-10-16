@@ -1,108 +1,124 @@
 #include "id.h"
 #include "enum.h"
 
-#ifndef PREPROCESS
-#   include <stdio.h>
-#endif
+#include <stdio.h>
 
 /****************************************************************/
-#define MY_ID(_, _V) \
-    _V(MY_ID_0, 0) \
-    _(MY_ID_GROUP1_START) \
-    _V(MY_ID_GROUP1_0, MY_ID_GROUP1_START) \
-    _(MY_ID_GROUP1_1) \
-    _(MY_ID_GROUP1_2) \
-    _(MY_ID_GROUP1_3) \
-    _V(MY_ID_GROUP1_666, 666) \
-    _(MY_ID_MAX) \
+#define SHAPE_POINTS(_, _V) \
+    _V(LINE, 2) \
+    _(TRIANGLE) \
+    _(TETRAGON) \
+    _(PENTAGON) \
+    _V(SEPTAGON, 7) \
 
-ENUM(MY_ID);
-ENUM_IMPL(MY_ID);
+ENUM(SHAPE_POINTS);
+ENUM_IMPL(SHAPE_POINTS);
+ENUM_DEFINE_TOSTRING(SHAPE_POINTS, Shape_ToString)
 
-ENUM_DECLARE_TOSTRING(MY_ID, MyId_ToString);
+ENUM_DECLARE_ITERATOR(SHAPE_POINTS,
+                      Shape_IteratorBegin,
+                      Shape_IteratorEnd,
+                      Shape_IteratorToValue);
 
-ENUM_DEFINE_TOSTRING(MY_ID, MyId_ToString)
+ENUM_DEFINE_ITERATOR(SHAPE_POINTS,
+                     Shape_IteratorBegin,
+                     Shape_IteratorEnd,
+                     Shape_IteratorToValue)
 
-ENUM_DECLARE_ITERATOR(MY_ID,
-                      MyId_IteratorBegin,
-                      MyId_IteratorEnd,
-                      MyId_IteratorToValue);
-
-ENUM_DEFINE_ITERATOR(MY_ID,
-                     MyId_IteratorBegin,
-                     MyId_IteratorEnd,
-                     MyId_IteratorToValue)
-
-void MyId_PrintAll(void)
+void Shape_PrintAll(void)
 {
-    MY_ID_Iterator_t iter = MyId_IteratorBegin();
-    MY_ID_Iterator_t end = MyId_IteratorEnd();
+    SHAPE_POINTS_Iterator_t iter = Shape_IteratorBegin();
+    SHAPE_POINTS_Iterator_t end = Shape_IteratorEnd();
 
-    while (iter != end)
+    while (iter <= end)
     {
-        enum MY_ID id = MyId_IteratorToValue(iter);
-        printf("%s = %d\n", MyId_ToString(id), id);
+        enum SHAPE_POINTS id = Shape_IteratorToValue(iter);
+        printf("A %s has %d sides.\n", Shape_ToString(id), id);
 
         iter++;
+    }
+}
+
+/* @bug Doesn't print final enum element */
+void Shape_PrintAllRev(void)
+{
+    SHAPE_POINTS_Iterator_t iter = Shape_IteratorEnd();
+    SHAPE_POINTS_Iterator_t begin = Shape_IteratorBegin();
+
+    while (iter >= begin)
+    {
+        enum SHAPE_POINTS id = Shape_IteratorToValue(iter);
+        printf("A %s has %d sides.\n", Shape_ToString(id), id);
+
+        iter--;
     }
 }
 
 /**
  * ToString implemented using Iterators
  */
-char const * MyId_AnotherToString(enum MY_ID literal)
+char const * Shape_AnotherToString(enum SHAPE_POINTS literal)
 {
-    MY_ID_Iterator_t iter = MyId_IteratorBegin();
-    MY_ID_Iterator_t end = MyId_IteratorEnd();
+    SHAPE_POINTS_Iterator_t iter = Shape_IteratorBegin();
+    SHAPE_POINTS_Iterator_t end = Shape_IteratorEnd();
 
-    while (iter != end)
+    while (iter <= end)
     {
-        if (MyId_IteratorToValue(iter) == literal)
+        if (Shape_IteratorToValue(iter) == literal)
         {
-            return MY_ID_IMPL[iter].name;
+            return SHAPE_POINTS_IMPL[iter].name;
         }
         iter++;
     }
+
+    return "UNKNOWN SHAPE";
 }
 
 /****************************************************************/
-void ExtId_PrintAll(void)
+void Hex_PrintAll(void)
 {
-    EXT_ID_Iterator_t iter;
+    HEX_Iterator_t iter;
 
-    for (iter = ExtId_IteratorBegin();
-         iter < ExtId_IteratorEnd();
+    for (iter = Hex_IteratorBegin();
+         iter < Hex_IteratorEnd();
          iter++)
     {
-        enum EXT_ID id = ExtId_IteratorToValue(iter);
-        printf("%s = %d\n", ExtId_ToString(id), id);
+        enum HEX id = Hex_IteratorToValue(iter);
+        printf("%s = %d\n", Hex_ToString(id), id);
+    }
+
+    /* Picks up the enum name that first matches HEX_MAX */
+    printf("%s = %d\n", Hex_ToString(HEX_MAX), HEX_MAX);
+}
+
+/****************************************************************/
+
+void local_enum(void)
+{
+    ENUM(SHAPE_POINTS);
+
+    enum SHAPE_POINTS points = TETRAGON;
+
+    switch (points)
+    {
+        case TRIANGLE:
+            printf("A Triangle\n");
+            break;
+        case TETRAGON:
+            printf("A Tetragon\n");
+            break;
+        default:
+            printf("Unknown Shape");
     }
 }
 
-/****************************************************************/
-#define MINI_ID(_, _V) \
-    _V(MINI_LEET, 1337) \
-
-ENUM(MINI_ID);
-ENUM_IMPL(MINI_ID);
-ENUM_DEFINE_TOSTRING(MINI_ID, MiniId_ToString)
-
-#define MICRO_ID(_, _V) \
-    _(MICRO_LEET) \
-
-ENUM(MICRO_ID);
-/****************************************************************/
-
 int main(void)
 {
-    ExtId_PrintAll();
-    MyId_PrintAll();
+    Shape_PrintAll();
+    Shape_PrintAllRev();
 
-    printf("%s = %d\n",
-           MyId_AnotherToString(MY_ID_GROUP1_666),
-           MY_ID_GROUP1_666);
+    printf("A %s has %d sides.\n", Shape_ToString(TETRAGON), TETRAGON);
 
-    printf("%s = %d\n", MiniId_ToString(MINI_LEET), MINI_LEET);
-    printf("%d\n", MICRO_LEET);
+    Hex_PrintAll();
 }
 

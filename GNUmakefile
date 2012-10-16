@@ -1,7 +1,10 @@
 PROJ := enum
+BASE_PATH := .
+
 DOS2UNIX := echo 2>&1 > /dev/null
 INDENT := indent
-BASE_PATH := .
+DOXYGEN := doxygen
+
 INCLUDES := \
 		   -I $(BASE_PATH) \
 
@@ -26,7 +29,7 @@ CSRCS := \
 COBJS := $(patsubst %.c, %.o, $(filter %.c,$(CSRCS)))
 CPREPS := $(patsubst %.c, %.E, $(filter %.c,$(CSRCS)))
 
-.PHONY: prep all clean
+.PHONY: prep all clean doc
 
 all: $(PROJ)
 prep: $(CPREPS)
@@ -42,5 +45,8 @@ prep: $(CPREPS)
 $(PROJ) : $(COBJS)
 	$(CC) -o $@ $(COBJS)
 
+docs:
+	$(DOXYGEN) Doxyfile
+
 clean:
-	@-$(RM) $(COBJS) $(CPREPS) $(PROJ)
+	@-$(RM) $(COBJS) $(CPREPS) $(PROJ) doc
