@@ -218,8 +218,8 @@ DOT_TRANSPARENT        = NO
 DOT_MULTI_TARGETS      = YES
 GENERATE_LEGEND        = YES
 DOT_CLEANUP            = YES
-#
-PROJECT_NAME           = enum
+#####################################
+PROJECT_NAME           = C-Enum
 INPUT                  = enum.h
 #FILE_PATTERNS          = *.c *.h
 GENERATE_LATEX         = NO

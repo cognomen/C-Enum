@@ -1,14 +1,14 @@
-PROJ := enum
-BASE_PATH := .
+PROJ := test_enum
 
 DOS2UNIX := echo 2>&1 > /dev/null
 INDENT := indent
 DOXYGEN := doxygen
 
 INCLUDES := \
-		   -I $(BASE_PATH) \
+		-I. \
+		-Itest \
 
-DEFINES := -std=c99 -pedantic
+DEFINES := -std=c99 -pedantic -DUNIT_TEST=test_enum
 
 INDENT_FLAGS := --k-and-r-style \
 				--blank-lines-after-declarations \
@@ -23,24 +23,24 @@ INDENT_FLAGS := --k-and-r-style \
 #--blank-lines-after-commas \
 
 CSRCS := \
-	id.c \
-	main.c \
+	test/test_enum.c \
+	test/main.c \
 
 COBJS := $(patsubst %.c, %.o, $(filter %.c,$(CSRCS)))
 CPREPS := $(patsubst %.c, %.E, $(filter %.c,$(CSRCS)))
 
-.PHONY: prep all clean doc
+.PHONY: prep all clean doc test
 
 all: $(PROJ)
 prep: $(CPREPS)
 
 %.E : %.c enum.h
-	$(CC) $(DEFINES) -D PREPROCESS -E -P -o $@ $<
+	$(CC) $(DEFINES) -D PREPROCESS $(INCLUDES) -E -P -o $@ $<
 	$(DOS2UNIX) $@
 	$(INDENT) $(INDENT_FLAGS) $@
 
 %.o : %.c enum.h
-	$(CC) -c $(DEFINES) -o $@ $<
+	$(CC) -c $(DEFINES) $(INCLUDES) -o $@ $<
 
 $(PROJ) : $(COBJS)
 	$(CC) -o $@ $(COBJS)

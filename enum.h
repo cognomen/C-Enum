@@ -7,21 +7,21 @@
  */
 
 /**
- * @defgroup Enum
+ * @defgroup C-Enum
  * 
  * @brief Module for generating enum property and iterator functions.
  *
- * Enum uses parameterized X-macros to expand a list of enum entry macros into
+ * C-Enum uses parameterized X-macros to expand a list of enum entry macros into
  * various C constructs.
  *
  * Ordinary enums, a table of enum value strings, an EnumToString function and 
  * enum iterator functions can all be generated.
  *
- * Enum supports generating separate code for interface and implementation.
+ * C-Enum supports generating separate code for interface and implementation.
  */
 
 /**
- * @addtogroup Enum
+ * @addtogroup C-Enum
  * @{
  */
 
@@ -42,16 +42,18 @@
  * A parameterized X-Macro. It accepts a list of macro instances
  * which are expanded via one of two applied X-macros.
  *
- * @param e A space-separated list of @ref ENUM_AS_ENUM or @ref ENUM_AS_ENUM_VALUE tuples
+ * @param e A non-homogeneous, list of @ref ENUM_AS_NAME, @ref
+ *          ENUM_AS_NAME_VALUE, @ref ENUM_AS_NAME_STRING or @ref
+ *          ENUM_AS_NAME_VALUE_STRING tuples.
+ *          Must not contain an element <i>e</i>_IMPL.
  *
  * @code
- * #define SHAPE_POINTS(_, _V) \
+ * #define SHAPE_POINTS(_, _V, _S, _VS) \
  *     _V(POINT, 1) \
  *     _(LINE) \
- *     _(TRIANGLE) \
- *     _(TETRAGON) \
- *     _(PENTAGON) \
- *     _V(OCTAGON, 8)
+ *     _S(TRIANGLE, "Sides of a Triangle") \
+ *     _V(PENTAGON, 5) \
+ *     _VS(OCTAGON, 8, "Sides of an Octagon") \
  *
  * ENUM(SHAPE_POINTS);
  * 
@@ -73,7 +75,7 @@
  */
 #define ENUM(e) \
     enum e { \
-        e(ENUM_AS_ENUM, ENUM_AS_ENUM_VALUE) \
+        e(ENUM_AS_NAME, ENUM_AS_NAME_VALUE, ENUM_AS_NAME_STRING, ENUM_AS_NAME_VALUE_STRING) \
     } \
 
 /**
@@ -82,10 +84,13 @@
  * A parameterized X-Macro. It accepts a list of macro instances
  * which are expanded via one of two applied X-macros.
  *
- * It emits @p e_IMPL, a static constant array of ("name", value)
+ * It emits @p e_IMPL, a static constant array of (value, "name")
  * pairs.
  *
- * @param e A space-separated list of @ref ENUM_AS_NAME or @ref ENUM_AS_NAME_VALUE tuples
+ * @param e A non-homogeneous, list of @ref ENUM_IMPL_AS_NAME, @ref
+ *          ENUM_IMPL_AS_NAME_VALUE, @ref ENUM_IMPL_AS_NAME_STRING or @ref
+ *          ENUM_IMPL_AS_NAME_VALUE_STRING tuples.  Must not contain an element
+ *          <i>e</i>_IMPL.
  *
  * @note This is a required pre-declaration for all ENUM_DEFINE_* macros.
  *
@@ -97,11 +102,11 @@
 #define ENUM_IMPL(e) \
     static const struct e##_PropertiesEntry\
     {\
+        enum e value;\
         char const* name;\
-        enum e      value;\
     } e##_IMPL[] = \
     { \
-        e(ENUM_AS_NAME, ENUM_AS_NAME_VALUE) \
+        e(ENUM_IMPL_AS_NAME, ENUM_IMPL_AS_NAME_VALUE, ENUM_IMPL_AS_NAME_STRING, ENUM_IMPL_AS_NAME_VALUE_STRING) \
     }
 
 /**
@@ -153,10 +158,10 @@
 /**
  * Emit iterator function declarations for enum @p e.
  *
- * @param e       Enum Name.
+ * @param e       C-Enum Name.
  * @param begin   Iterator Begin function name.
  * @param end     Iterator End function name.
- * @param tovalue Iterator to Enum value function name.
+ * @param tovalue Iterator to C-Enum value function name.
  *
  * @code
  * ENUM_DECLARE_ITERATOR(SHAPE_POINTS,
@@ -178,10 +183,10 @@
 /**
  * Emit iterator function definitions for enum @p e.
  *
- * @param e       Enum Name.
+ * @param e       C-Enum Name.
  * @param begin   Iterator Begin function name.
  * @param end     Iterator End function name.
- * @param tovalue Iterator to Enum value function name.
+ * @param tovalue Iterator to C-Enum value function name.
  *
  * @note No closing semi-colon.
  * @pre @ref ENUM_IMPL declaration must be visible in the context.
@@ -239,48 +244,110 @@
  * Internal X-Macro which emits an enum entry as @p name only with an implicit
  * enum value.
  *
- * @param name An enum entry name
+ * @param name An enum element name
  *
  * @code
- * ENUM_AS_ENUM(SIDES_OF_A_TRIANGLE) => SIDES_OF_A_TRIANGLE,
+ * ENUM_AS_NAME(SIDES_OF_A_TRIANGLE) => SIDES_OF_A_TRIANGLE,
  * @endcode
  */
-#define ENUM_AS_ENUM(name) name ,
+#define ENUM_AS_NAME(name) name ,
+
+/**
+ * Internal X-Macro which emits a (@p (name), @p "name") array initializer tuple.
+ *
+ * A default descriptive name is created using the preprocessor stringification
+ * operator (#).
+ *
+ * @param name An enum element name
+ *
+ * @code
+ * ENUM_IMPL_AS_NAME(SIDES_OF_A_TRIANGLE) => {(SIDES_OF_A_TRIANGLE), "SIDES_OF_A_TRIANGLE"},
+ * @endcode
+ */
+#define ENUM_IMPL_AS_NAME(name)       {(name), #name},
 
 /**
  * Internal X-Macro which emits an enum entry as @p name and @p value.
  *
- * @param name An enum entry name
- * @param value The constant-value assigned to the enum entry name
+ * @param name An enum element name
+ * @param value Constant integer expression assigned to the enum element name
  *
  * @code
- * ENUM_AS_ENUM_VALUE(SIDES_OF_A_TRIANGLE, 3) => SIDES_OF_A_TRIANGLE = 3,
+ * ENUM_AS_NAME_VALUE(SIDES_OF_A_TRIANGLE, 3) => SIDES_OF_A_TRIANGLE = 3,
  * @endcode
  */
-#define ENUM_AS_ENUM_VALUE(name, value) name = value,
+#define ENUM_AS_NAME_VALUE(name, value) name = (value),
 
 /**
- * Internal X-Macro which emits a (@p "name", @p (name)) array initializer tuple.
+ * Internal X-Macro which emits a (@p value, @p "name") array initializer tuple.
  *
- * @param name An enum entry name
+ * A default descriptive name is created using the preprocessor stringification
+ * operator (#).
+ *
+ * @param name An enum element name
+ * @param unused_value Unused constant integer expression. The value is instead
+ *                     derived from the enum value of @ref name.
+ *
  *
  * @code
- * ENUM_AS_NAME(SIDES_OF_A_TRIANGLE) => {"SIDES_OF_A_TRIANGLE", (SIDES_OF_A_TRIANGLE)},
+ * ENUM_IMPL_AS_NAME_VALUE(SIDES_OF_A_TRIANGLE, 3) => {(3), "SIDES_OF_A_TRIANGLE"},
  * @endcode
  */
-#define ENUM_AS_NAME(name)       {#name, (name)},
+#define ENUM_IMPL_AS_NAME_VALUE(name, unused_value) {(name), #name},
 
 /**
- * Internal X-Macro which emits a (@p "name", @p value) array initializer tuple.
+ * Internal X-Macro which emits an enum entry as @p name.
  *
- * @param name An enum entry name
- * @param value The constant-value assigned to the enum entry name
+ * @param name An enum element name
+ * @param unused_string Unused
  *
  * @code
- * ENUM_AS_NAME_VALUE(SIDES_OF_A_TRIANGLE, 3) => {"SIDES_OF_A_TRIANGLE", (3)},
+ * ENUM_AS_NAME_STRING(SIDES_OF_A_TRIANGLE, "Sides of a Triangle")
+ *      => SIDES_OF_A_TRIANGLE,
  * @endcode
  */
-#define ENUM_AS_NAME_VALUE(name, value) {#name, (int) value},
+#define ENUM_AS_NAME_STRING(name, unused_string) name,
+
+/**
+ * Internal X-Macro which emits a (@p (name), @p string) array initializer tuple.
+ *
+ * @param name An enum element name
+ * @param string Descriptive string assigned to the enum element name
+ *
+ * @code
+ * ENUM_IMPL_AS_NAME_STRING(SIDES_OF_A_TRIANGLE, "Sides of a Triangle")
+ *      => {"Sides of a Triangle", (SIDES_OF_A_TRIANGLE)},
+ * @endcode
+ */
+#define ENUM_IMPL_AS_NAME_STRING(name, string) {(name), string},
+
+/**
+ * Internal X-Macro which emits an enum entry as @p name.
+ *
+ * @param name An enum element name
+ * @param value Constant integer expression assigned to the enum element name
+ * @param unused_string Unused
+ *
+ * @code
+ * ENUM_AS_NAME_VALUE(SIDES_OF_A_TRIANGLE, 3) => SIDES_OF_A_TRIANGLE = 3,
+ * @endcode
+ */
+#define ENUM_AS_NAME_VALUE_STRING(name, value, unused_string) name = value,
+
+/**
+ * Internal X-Macro which emits a (@p (name), @p "string") array initializer tuple.
+ *
+ * @param name An enum element name
+ * @param unused_value Unused constant integer expression. The value is instead
+ *                     derived from the enum value of @ref name.
+ * @param string Descriptive string assigned to the enum element name
+ *
+ * @code
+ * ENUM_IMPL_AS_NAME_VALUE_STRING(SIDES_OF_A_TRIANGLE, 3, "Sides of a Triangle")
+ *      => {3, "Sides of a Triangle"},
+ * @endcode
+ */
+#define ENUM_IMPL_AS_NAME_VALUE_STRING(name, unused_value, string) {(name), string},
 
 /**
  *     @} // addtogroup Internal
@@ -289,6 +356,6 @@
 #endif /* ENUM_H */
 
 /**
- * @} // addtogroup Enum
+ * @} // addtogroup C-Enum
  */
 
