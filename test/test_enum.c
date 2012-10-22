@@ -405,6 +405,38 @@ static char* test_Quad(void)
 }
 
 /********************************/
+const static float map_0 = 0.1f;
+const static float map_1 = 0.1f;
+const static float map_2 = 0.2f;
+const static float map_3 = 0.3f;
+
+#define MAP(_, _V, _S, _VS) \
+    _S(MAP_0, &map_0) \
+    _S(MAP_1, &map_1) \
+    _S(MAP_2, &map_2) \
+    _S(MAP_3, &map_3) \
+
+ENUM(MAP);
+ENUM_IMPL(MAP);
+ENUM_DEFINE_TOSTRING(MAP, Map_ToString)
+
+/**
+ * Ensure the first value of an auto enum is zero.
+ */
+static char* test_Map(void)
+{
+    ENUM(MAP);
+    ENUM_IMPL(MAP);
+
+    mu_assert("test_Map: ToString(MAP_0) not equal ", *Map_ToString(MAP_0) < 0.11f  );
+    mu_assert("test_Map: ToString(MAP_1) not equal ", *Map_ToString(MAP_1) < 0.11f  );
+    mu_assert("test_Map: ToString(MAP_2) not equal ", *Map_ToString(MAP_2) < 0.21f  );
+    mu_assert("test_Map: ToString(MAP_3) not equal ", *Map_ToString(MAP_3) < 0.31f  );
+
+    return 0;
+}
+
+/********************************/
 char* test_enum(void)
 {
     mu_run_test(test_AutoZero);
