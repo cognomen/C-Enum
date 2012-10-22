@@ -8,7 +8,7 @@ INCLUDES := \
 		-I. \
 		-Itest \
 
-DEFINES := -std=c99 -pedantic -DUNIT_TEST=test_enum
+DEFINES := -g -std=c99 -pedantic -DUNIT_TEST=test_enum
 
 INDENT_FLAGS := --k-and-r-style \
 				--blank-lines-after-declarations \
