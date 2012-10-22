@@ -85,7 +85,7 @@
  * which are expanded via one of two applied X-macros.
  *
  * It emits @p e_IMPL, a static constant array of (value, "name")
- * pairs.
+ * pairs and an iterator typedef @p e_Iterator_t for the enum.
  *
  * @param e A non-homogeneous, list of @ref ENUM_IMPL_AS_NAME, @ref
  *          ENUM_IMPL_AS_NAME_VALUE, @ref ENUM_IMPL_AS_NAME_STRING or @ref
@@ -99,7 +99,11 @@
  * @endcode
  *
  */
+/* Note it is critical that the iterator type be a signed type
+ * so that &lt; tests against Begin() do not fail.
+ */
 #define ENUM_IMPL(e) \
+    typedef int e##_Iterator_t; /* declare here so DECLARE_ITERATOR is not required */ \
     static const struct e##_PropertiesEntry\
     {\
         enum e value;\
@@ -121,11 +125,11 @@
  * @param e An enum name.
  * @param fname of ToString function.
  *
- * @pre @ref ENUM_IMPL declaration must be visible in the context.
+ * @pre @ref ENUM_IMPL declaration must be visible in the current context.
  *
  * @note No closing semi-colon.
  * @bug If multiple enum entries have the same constant value, the name of the
- *      first one will be printed.
+ *      first one will be printed. (Issue #1)
  *
  * @code
  * ENUM_IMPL(SHAPE_POINTS);
@@ -163,6 +167,8 @@
  * @param end     Iterator End function name.
  * @param tovalue Iterator to C-Enum value function name.
  *
+ * @pre @ref ENUM_IMPL declaration must be visible in the current context.
+ *
  * @code
  * ENUM_DECLARE_ITERATOR(SHAPE_POINTS,
  *                       Shape_IteratorBegin,
@@ -171,11 +177,7 @@
  * @endcode
  *
  */
-/* Note it is critical that the iterator type be a signed type
- * so that &lt; tests against Begin() do not fail.
- */
 #define ENUM_DECLARE_ITERATOR(e, begin, end, tovalue) \
-    typedef int e##_Iterator_t; \
     e##_Iterator_t begin(void); \
     e##_Iterator_t end(void); \
     enum e tovalue(e##_Iterator_t iter) \
@@ -189,7 +191,7 @@
  * @param tovalue Iterator to C-Enum value function name.
  *
  * @note No closing semi-colon.
- * @pre @ref ENUM_IMPL declaration must be visible in the context.
+ * @pre @ref ENUM_IMPL declaration must be visible in the current context.
  *
  * @code
  * ENUM_IMPL(SHAPE_POINTS);
