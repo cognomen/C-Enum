@@ -35,18 +35,18 @@ static char* test_AutoZero(void)
 }
 
 /********************************/
-#define SPECIFIED(_, _V, _S, _VS) \
-    _V(SPECIFIED_2, 2) \
+#define VALUE(_, _V, _S, _VS) \
+    _V(VALUE_2, 2) \
 
 /**
  * Ensure the specified value of a specified enum is correct.
  */
 static char* test_SpecifiedValue(void)
 {
-    ENUM(SPECIFIED);
+    ENUM(VALUE);
 
     mu_assert("test_SpecifiedValue: Specified element not equal to 2",
-              SPECIFIED_2 == 2);
+              VALUE_2 == 2);
 
     return 0;
 }
@@ -115,104 +115,104 @@ static char* test_ReferencedValue(void)
 }
 
 /********************************/
-#define SPECIFIED_NEGATIVE(_, _V, _S, _VS) \
-    _V(SPECIFIED_NEGATIVE_2, -2) \
+#define VALUE_NEGATIVE(_, _V, _S, _VS) \
+    _V(VALUE_NEGATIVE_2, -2) \
 
 /**
  * Ensure the specified negative value of a specified enum is correct.
  */
 static char* test_SpecifiedNegative(void)
 {
-    ENUM(SPECIFIED_NEGATIVE);
+    ENUM(VALUE_NEGATIVE);
 
     mu_assert("test_SpecifiedNegative: Specified element not equal to -2",
-              SPECIFIED_NEGATIVE_2 == -2);
+              VALUE_NEGATIVE_2 == -2);
 
     return 0;
 }
 
 /********************************/
-#define SPECIFIED_UNSIGNED(_, _V, _S, _VS) \
-    _V(SPECIFIED_UNSIGNED_2, 2u) \
+#define VALUE_UNSIGNED(_, _V, _S, _VS) \
+    _V(VALUE_UNSIGNED_2, 2u) \
 
 /**
  * Ensure the specified unsigned value of a specified enum is correct.
  */
 static char* test_SpecifiedUnsigned(void)
 {
-    ENUM(SPECIFIED_UNSIGNED);
+    ENUM(VALUE_UNSIGNED);
 
     mu_assert("test_SpecifiedUnsigned: Specified element not equal to 2u",
-              SPECIFIED_UNSIGNED_2 == 2u);
+              VALUE_UNSIGNED_2 == 2u);
 
     return 0;
 }
 
 /********************************/
-#define SPECIFIED_BITSET(_, _V, _S, _VS) \
-    _V(SPECIFIED_BITSET_1, (1u << 0)) \
-    _V(SPECIFIED_BITSET_2, (1u << 1)) \
-    _V(SPECIFIED_BITSET_4, (1u << 2)) \
-    _V(SPECIFIED_BITSET_8, (1u << 3)) \
-    _V(SPECIFIED_BITSET_16, (1u << 4)) \
+#define VALUE_BITSET(_, _V, _S, _VS) \
+    _V(VALUE_BITSET_1, (1u << 0)) \
+    _V(VALUE_BITSET_2, (1u << 1)) \
+    _V(VALUE_BITSET_4, (1u << 2)) \
+    _V(VALUE_BITSET_8, (1u << 3)) \
+    _V(VALUE_BITSET_16, (1u << 4)) \
 
 /**
  * Ensure the specified unsigned value of a specified enum is correct.
  */
 static char* test_SpecifiedBitset(void)
 {
-    ENUM(SPECIFIED_BITSET);
+    ENUM(VALUE_BITSET);
 
     mu_assert("test_SpecifiedBitset: Specified element not equal to 2u",
-              SPECIFIED_BITSET_1 == 1u);
+              VALUE_BITSET_1 == 1u);
     mu_assert("test_SpecifiedBitset: Specified element not equal to 2u",
-              SPECIFIED_BITSET_2 == 2u);
+              VALUE_BITSET_2 == 2u);
     mu_assert("test_SpecifiedBitset: Specified element not equal to 2u",
-              SPECIFIED_BITSET_4 == 4u);
+              VALUE_BITSET_4 == 4u);
     mu_assert("test_SpecifiedBitset: Specified element not equal to 2u",
-              SPECIFIED_BITSET_8 == 8u);
+              VALUE_BITSET_8 == 8u);
     mu_assert("test_SpecifiedBitset: Specified element not equal to 2u",
-              SPECIFIED_BITSET_16 == 16u);
+              VALUE_BITSET_16 == 16u);
 
     return 0;
 }
 
 /********************************/
-#define SPECIFIED_INT(_, _V, _S, _VS) \
-    _V(SPECIFIED_INT_MIN, INT_MIN) \
-    _V(SPECIFIED_INT_MAX, INT_MAX) \
+#define VALUE_INT(_, _V, _S, _VS) \
+    _V(VALUE_INT_MIN, INT_MIN) \
+    _V(VALUE_INT_MAX, INT_MAX) \
 
 /**
  * Ensure the specified unsigned value of a specified enum is correct.
  */
 static char* test_SpecifiedInt(void)
 {
-    ENUM(SPECIFIED_INT);
+    ENUM(VALUE_INT);
 
     mu_assert("test_SpecifiedInt: Specified element not equal to INT_MIN",
-              SPECIFIED_INT_MIN == INT_MIN);
+              VALUE_INT_MIN == INT_MIN);
     mu_assert("test_SpecifiedInt: Specified element not equal to INT_MAX",
-              SPECIFIED_INT_MAX == INT_MAX);
+              VALUE_INT_MAX == INT_MAX);
 
     return 0;
 }
 
 /********************************/
-#define SPECIFIED_LONG(_, _V, _S, _VS) \
-    _V(SPECIFIED_LONG_MIN, LONG_MIN) \
-    _V(SPECIFIED_LONG_MAX, LONG_MAX) \
+#define VALUE_LONG(_, _V, _S, _VS) \
+    _V(VALUE_LONG_MIN, LONG_MIN) \
+    _V(VALUE_LONG_MAX, LONG_MAX) \
 
 /**
  * Ensure the specified unsigned value of a specified enum is correct.
  */
 static char* test_SpecifiedLong(void)
 {
-    ENUM(SPECIFIED_LONG);
+    ENUM(VALUE_LONG);
 
     mu_assert("test_SpecifiedLong: Specified element not equal to LONG_MIN",
-              SPECIFIED_LONG_MIN == LONG_MIN);
+              VALUE_LONG_MIN == LONG_MIN);
     mu_assert("test_SpecifiedLong: Specified element not equal to LONG_MAX",
-              SPECIFIED_LONG_MAX == LONG_MAX);
+              VALUE_LONG_MAX == LONG_MAX);
 
     return 0;
 }
@@ -274,49 +274,49 @@ static char* test_Discontinuity(void)
 
 /********************************/
 #if 0
-#define SPECIFIED_ABUSE(_, _V, _S, _VS) \
-    _V(SPECIFIED_ABUSE_1_plus_1, 1 + 1) \
-    _V(SPECIFIED_ABUSE_1_div_1, 1 / 1) \
-    _V(SPECIFIED_ABUSE_CHAR_A, 'A') \
-    _V(SPECIFIED_ABUSE_BRACKETS, ((5)) ) \
-    _V(SPECIFIED_ABUSE_TRUE, true) \
-    _V(SPECIFIED_ABUSE, 42) \
-    _V(SPECIFIED_ABUSE_RECURSIVE, SPECIFIED_ABUSE) \
+#define VALUE_ABUSE(_, _V, _S, _VS) \
+    _V(VALUE_ABUSE_1_plus_1, 1 + 1) \
+    _V(VALUE_ABUSE_1_div_1, 1 / 1) \
+    _V(VALUE_ABUSE_CHAR_A, 'A') \
+    _V(VALUE_ABUSE_BRACKETS, ((5)) ) \
+    _V(VALUE_ABUSE_TRUE, true) \
+    _V(VALUE_ABUSE, 42) \
+    _V(VALUE_ABUSE_RECURSIVE, VALUE_ABUSE) \
     /* The following break later usage */ \
     _V(ENUM, 10) \
     _V(ENUM_AS_ENUM, 11) \
     _V(ENUM_AS_ENUM_VALUE, 13) \
-    _V(SPECIFIED_ABUSE_ENUM, ENUM) \
-    _V(SPECIFIED_ABUSE__, _) \
-    _V(SPECIFIED_ABUSE__V, _V, _S, _VS) \
+    _V(VALUE_ABUSE_ENUM, ENUM) \
+    _V(VALUE_ABUSE__, _) \
+    _V(VALUE_ABUSE__V, _V, _S, _VS) \
 
 /**
  * Ensure ENUM is resilient to declaration abuse.
  */
 static char* test_SpecifiedAbuse(void)
 {
-    ENUM(SPECIFIED_ABUSE);
+    ENUM(VALUE_ABUSE);
 
     mu_assert("test_SpecifiedAbuse: 1 + 1 not equal to 2",
-              SPECIFIED_ABUSE_1_plus_1 == 2);
+              VALUE_ABUSE_1_plus_1 == 2);
     mu_assert("test_SpecifiedAbuse: 1 / 1 not equal to 1",
-              SPECIFIED_ABUSE_1_div_1 == 1);
+              VALUE_ABUSE_1_div_1 == 1);
     mu_assert("test_SpecifiedAbuse: CHAR_A not equal to 'A'",
-              SPECIFIED_ABUSE_CHAR_A == 'A');
+              VALUE_ABUSE_CHAR_A == 'A');
     mu_assert("test_SpecifiedAbuse: Brackets element not equal to 5",
-              SPECIFIED_ABUSE_BRACKETS == 5);
+              VALUE_ABUSE_BRACKETS == 5);
     mu_assert("test_SpecifiedAbuse: True element not equal to 'true'",
-              SPECIFIED_ABUSE_TRUE == 1);
+              VALUE_ABUSE_TRUE == 1);
     mu_assert("test_SpecifiedAbuse: Recursive element not equal to 42",
-              SPECIFIED_ABUSE_RECURSIVE == 42);
+              VALUE_ABUSE_RECURSIVE == 42);
     mu_assert("test_SpecifiedAbuse: 1 + 1 not equal to 2",
-              SPECIFIED_ABUSE_1_plus_1 == 2);
+              VALUE_ABUSE_1_plus_1 == 2);
     mu_assert("test_SpecifiedAbuse: 'ENUM' element not equal to 10",
-              SPECIFIED_ABUSE_ENUM == 10);
+              VALUE_ABUSE_ENUM == 10);
     mu_assert("test_SpecifiedAbuse: _ element not equal to 11",
-              SPECIFIED_ABUSE__ == 11);
+              VALUE_ABUSE__ == 11);
     mu_assert("test_SpecifiedAbuse: _V element not equal to 13",
-              SPECIFIED_ABUSE__V == 13);
+              VALUE_ABUSE__V == 13);
 
     return 0;
 }
@@ -379,9 +379,6 @@ ENUM_DEFINE_TOSTRING(QUAD, Quad_AnotherToString)
  */
 static char* test_Quad(void)
 {
-    ENUM(QUAD);
-    ENUM_IMPL(QUAD);
-
     mu_assert("test_Quad: ZEROTH element not equal to ZERO",
               QUAD_0 == 0);
 
@@ -400,38 +397,6 @@ static char* test_Quad(void)
     mu_assert("test_Quad: ToString(QUAD_4) not equal to 'Quad 4'",
               strcmp("Quad 4", Quad_AnotherToString(QUAD_4)) == 0);
 
-
-    return 0;
-}
-
-/********************************/
-const static float map_0 = 0.1f;
-const static float map_1 = 0.1f;
-const static float map_2 = 0.2f;
-const static float map_3 = 0.3f;
-
-#define MAP(_, _V, _S, _VS) \
-    _S(MAP_0, &map_0) \
-    _S(MAP_1, &map_1) \
-    _S(MAP_2, &map_2) \
-    _S(MAP_3, &map_3) \
-
-ENUM(MAP);
-ENUM_IMPL(MAP);
-ENUM_DEFINE_TOSTRING(MAP, Map_ToString)
-
-/**
- * Ensure the first value of an auto enum is zero.
- */
-static char* test_Map(void)
-{
-    ENUM(MAP);
-    ENUM_IMPL(MAP);
-
-    mu_assert("test_Map: ToString(MAP_0) not equal ", *Map_ToString(MAP_0) < 0.11f  );
-    mu_assert("test_Map: ToString(MAP_1) not equal ", *Map_ToString(MAP_1) < 0.11f  );
-    mu_assert("test_Map: ToString(MAP_2) not equal ", *Map_ToString(MAP_2) < 0.21f  );
-    mu_assert("test_Map: ToString(MAP_3) not equal ", *Map_ToString(MAP_3) < 0.31f  );
 
     return 0;
 }

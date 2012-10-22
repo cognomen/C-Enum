@@ -103,7 +103,7 @@
     static const struct e##_PropertiesEntry\
     {\
         enum e value;\
-        void const* name;\
+        const char* name;\
     } e##_IMPL[] = \
     { \
         e(ENUM_IMPL_AS_NAME, ENUM_IMPL_AS_NAME_VALUE, ENUM_IMPL_AS_NAME_STRING, ENUM_IMPL_AS_NAME_VALUE_STRING) \
