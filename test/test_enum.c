@@ -7,6 +7,7 @@
 #include <string.h> /* memset, memcmp */
 #include <limits.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #include "enum.h"
 
@@ -405,11 +406,10 @@ static char* test_Bug_1_ToStringLookup(void)
 
 /********************************/
 #define ITER(_, _V, _S, _VS) \
-    _(ITER_0) \
+    _S(ITER_FIRST, "First") \
     _V(ITER_1, 1) \
     _S(ITER_2, "ITER 2") \
-    _VS(ITER_4, 4, "ITER 4") \
-    _VS(ITER_8, 8, "ITER 8") \
+    _S(ITER_LAST, "Last") \
 
 ENUM(ITER);
 ENUM_IMPL(ITER);
@@ -420,35 +420,98 @@ ENUM_DEFINE_ITERATOR(ITER,
                      ITER_IteratorToValue)
 
 /**
- * Ensure the first value of an auto enum is zero.
+ * Test enum iteration.
  */
 static char* test_Iterator(void)
 {
+    size_t count = 0;
+
     struct test {
         const char* expected;
         char* error;
     } t[] = {
-        {"ITER_0", "test_Iterator[ITER_0]: ITER_ToString failure"},
+        {"First", "test_Iterator[ITER_FIRST]: ITER_ToString failure"},
         {"ITER_1", "test_Iterator[ITER_1]: ITER_ToString failure"},
         {"ITER 2", "test_Iterator[ITER_2]: ITER_ToString failure"},
-        {"ITER 4", "test_Iterator[ITER_4]: ITER_ToString failure"},
-        {"ITER 8", "test_Iterator[ITER_8]: ITER_ToString failure"},
-        {"ITER_BUG", "test_Iterator[BUG]: ITER_ToString failure"}
+        {"Last", "test_Iterator[ITER_LAST]: ITER_ToString failure"},
     };
 
 
     ITER_Iterator_t iter = ITER_IteratorBegin();
     ITER_Iterator_t end = ITER_IteratorEnd();
 
+    count = 0;
     while (iter <= end)
     {
         enum ITER id = ITER_IteratorToValue(iter);
-        mu_assert(t[iter].error,
-                  strcmp(ITER_ToString(id), t[iter].expected) == 0);
-
+        mu_assert(t[count].error,
+                  strcmp(ITER_ToString(id), t[count].expected) == 0);
 
         iter++;
+        count++;
     }
+
+    count = 0;
+    for (iter = ITER_IteratorBegin(); iter <= end ; iter++)
+    {
+        enum ITER id = ITER_IteratorToValue(iter);
+        mu_assert(t[count].error,
+                  strcmp(ITER_ToString(id), t[count].expected) == 0);
+        count++;
+    }
+
+    mu_assert("test_Iterator: incorrect iteration count", count == sizeof(t) / sizeof(t[0]));
+
+    return 0;
+}
+
+/**
+ * Test reverse iteration.
+ */
+static char* test_ReverseIterator(void)
+{
+    size_t count = 0;
+
+    struct test {
+        const char* expected;
+        char* error;
+    } t[] = {
+        {"Last", "test_Iterator[ITER_LAST]: ITER_ToString failure"},
+        {"ITER 2", "test_Iterator[ITER_2]: ITER_ToString failure"},
+        {"ITER_1", "test_Iterator[ITER_1]: ITER_ToString failure"},
+        {"First", "test_Iterator[ITER_FIRST]: ITER_ToString failure"},
+    };
+
+
+    ITER_Iterator_t iter = ITER_IteratorEnd();
+    ITER_Iterator_t begin = ITER_IteratorBegin();
+
+    /*
+     * NB: this loop would cause a segfault if the iterator were of an
+     * unsigned type!
+     *
+     * Since begin is 0, an unsigned iter will always be larger.
+     */
+    count = 0;
+    while (iter >= begin)
+    {
+        enum ITER id = ITER_IteratorToValue(iter);
+        mu_assert(t[count].error,
+                  strcmp(ITER_ToString(id), t[count].expected) == 0);
+
+        iter--;
+        count++;
+    }
+
+    count = 0;
+    for (iter = ITER_IteratorEnd(); iter >= begin ; iter--)
+    {
+        enum ITER id = ITER_IteratorToValue(iter);
+        mu_assert(t[count].error,
+                  strcmp(ITER_ToString(id), t[count].expected) == 0);
+        count++;
+    }
+    mu_assert("test_Iterator: incorrect iteration count", count == sizeof(t) / sizeof(t[0]));
 
     return 0;
 }
@@ -485,6 +548,7 @@ char* test_enum(void)
     mu_run_test(test_ValueString);
     //mu_run_test(test_Bug_1_ToStringLookup);
     mu_run_test(test_Iterator);
+    mu_run_test(test_ReverseIterator);
 
 
     return 0;

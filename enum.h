@@ -58,7 +58,7 @@
 #ifndef ENUM_H
 #define ENUM_H
 
-#include <stddef.h> // size_t
+#include <stddef.h> // size_t, ptrdiff_t
 
 /**
  * Declares an enum @p e.
@@ -111,11 +111,11 @@
  * It emits @p e_IMPL, a static constant array of (value, "name")
  * pairs and an iterator typedef @p e_Iterator_t for the enum.
  *
- * The @p e_Iterator_t is effectively a signed integer.
+ * The @p e_Iterator_t is a signed integer type.
  * It is incremented with the usual pre- or post- increment
  * operator.
  *
- * @param e A non-homogeneous, list of @ref ENUM_IMPL_AS_NAME, @ref
+ * @param e A non-homogeneous list of @ref ENUM_IMPL_AS_NAME, @ref
  *          ENUM_IMPL_AS_NAME_VALUE, @ref ENUM_IMPL_AS_NAME_STRING or @ref
  *          ENUM_IMPL_AS_NAME_VALUE_STRING tuples.  Must not contain an element
  *          <i>e</i>_IMPL.
@@ -131,7 +131,7 @@
  * so that &lt; tests against Begin() do not fail.
  */
 #define ENUM_IMPL(e) \
-    typedef int e##_Iterator_t; /* declare here so DECLARE_ITERATOR is not required */ \
+    typedef ptrdiff_t e##_Iterator_t; /* declare here so DECLARE_ITERATOR is not required */ \
     static const struct e##_PropertiesEntry\
     {\
         enum e value;\
@@ -239,7 +239,7 @@
  *         enum SHAPE_POINTS id = Shape_IteratorToValue(iter);
  *         printf("A %s has %d sides.\n", Shape_ToString(id), id);
  *
- *         iter++;
+ *         iter++; // increment as an integer
  *     }
  * }
  * @endcode

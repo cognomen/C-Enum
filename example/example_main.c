@@ -16,7 +16,7 @@ int main(void)
     {
         enum SHAPE shape = Shape_IteratorToValue(iter);
         printf("%s sides: %d.\n", Shape_ToString(shape), shape);
-        iter++;
+        iter++; // increment as an integer
     }
 
     return 0;
