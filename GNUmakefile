@@ -1,4 +1,4 @@
-PROJ := test_enum
+PROJ := test.out
 
 DOS2UNIX := echo 2>&1 > /dev/null
 INDENT := indent
@@ -29,10 +29,22 @@ CSRCS := \
 COBJS := $(patsubst %.c, %.o, $(filter %.c,$(CSRCS)))
 CPREPS := $(patsubst %.c, %.E, $(filter %.c,$(CSRCS)))
 
-.PHONY: prep all clean doc test
+EXAMPLE := example.out
+EXAMPLE_CSRCS := \
+	example/example_main.c \
+	example/shape.c \
 
-all: $(PROJ)
+EXAMPLE_COBJS := $(patsubst %.c, %.o, $(filter %.c,$(EXAMPLE_CSRCS)))
+EXAMPLE_CPREPS := $(patsubst %.c, %.E, $(filter %.c,$(EXAMPLE_CSRCS)))
+
+.PHONY: prep all clean docs test example
+
+all: test example docs
+test: $(PROJ)
+example: $(EXAMPLE)
+
 prep: $(CPREPS)
+example_prep: $(EXAMPLE_CPREPS)
 
 %.E : %.c enum.h
 	$(CC) $(DEFINES) -D PREPROCESS $(INCLUDES) -E -P -o $@ $<
@@ -45,8 +57,12 @@ prep: $(CPREPS)
 $(PROJ) : $(COBJS)
 	$(CC) -o $@ $(COBJS)
 
+$(EXAMPLE) : $(EXAMPLE_COBJS)
+	$(CC) -o $@ $(EXAMPLE_COBJS)
+
 docs:
 	$(DOXYGEN) Doxyfile
 
 clean:
 	@-$(RM) -rf $(COBJS) $(CPREPS) $(PROJ) doc
+	@-$(RM) -rf $(EXAMPLE_COBJS) $(EXAMPLE_CPREPS) $(EXAMPLE)

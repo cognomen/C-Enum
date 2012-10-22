@@ -1,9 +1,33 @@
 /**
- * Implementation of enum property and iterator functions.
+ * @mainpage C-Enum
  *
  * @author mark AT cognomen DOT co DOT uk
  *
  * @copyright Dedicated to the public domain. Use it as you wish.
+ *
+ * @brief Implementation of enum-string mapping and enum iterator functions.
+ *
+ * @section string_mapping String-Mapping
+ * It's often required to define an enumeration and also print a string for
+ * each enum element (Error codes for example).
+ *
+ * While it's typical to define a string table for each enum element,
+ * maintaining these manually is problematic.
+ *
+ * C-Enum generates an enum and its string table from a single definition,
+ * without messy @p \#includes or @p \#def-\#undefs.
+ *
+ * @section iterators Iterators
+ * C-Enum goes further and lets you define iterator functions which can be used
+ * to iterate over a discontinuous enumeration.
+ *
+ * In its current implementation, C-Enum is limited to enums containing at most
+ * @p INT_MAX elements.
+ *
+ * @example example/shape.h
+ * @example example/shape.c
+ * @example example/example_main.c
+ *
  */
 
 /**
@@ -40,9 +64,9 @@
  * Declares an enum @p e.
  *
  * A parameterized X-Macro. It accepts a list of macro instances
- * which are expanded via one of two applied X-macros.
+ * which are expanded via one of four applied X-macros.
  *
- * @param e A non-homogeneous, list of @ref ENUM_AS_NAME, @ref
+ * @param e A non-homogeneous list of @ref ENUM_AS_NAME, @ref
  *          ENUM_AS_NAME_VALUE, @ref ENUM_AS_NAME_STRING or @ref
  *          ENUM_AS_NAME_VALUE_STRING tuples.
  *          Must not contain an element <i>e</i>_IMPL.
@@ -86,6 +110,10 @@
  *
  * It emits @p e_IMPL, a static constant array of (value, "name")
  * pairs and an iterator typedef @p e_Iterator_t for the enum.
+ *
+ * The @p e_Iterator_t is effectively a signed integer.
+ * It is incremented with the usual pre- or post- increment
+ * operator.
  *
  * @param e A non-homogeneous, list of @ref ENUM_IMPL_AS_NAME, @ref
  *          ENUM_IMPL_AS_NAME_VALUE, @ref ENUM_IMPL_AS_NAME_STRING or @ref
@@ -252,7 +280,7 @@
  * ENUM_AS_NAME(SIDES_OF_A_TRIANGLE) => SIDES_OF_A_TRIANGLE,
  * @endcode
  */
-#define ENUM_AS_NAME(name) name ,
+#define ENUM_AS_NAME(name) name,
 
 /**
  * Internal X-Macro which emits a (@p (name), @p "name") array initializer tuple.
@@ -288,7 +316,7 @@
  *
  * @param name An enum element name
  * @param unused_value Unused constant integer expression. The value is instead
- *                     derived from the enum value of @ref name.
+ *                     derived from the enum value of @p name.
  *
  *
  * @code
@@ -334,14 +362,14 @@
  * ENUM_AS_NAME_VALUE(SIDES_OF_A_TRIANGLE, 3) => SIDES_OF_A_TRIANGLE = 3,
  * @endcode
  */
-#define ENUM_AS_NAME_VALUE_STRING(name, value, unused_string) name = value,
+#define ENUM_AS_NAME_VALUE_STRING(name, value, unused_string) name = (value),
 
 /**
  * Internal X-Macro which emits a (@p (name), @p "string") array initializer tuple.
  *
  * @param name An enum element name
  * @param unused_value Unused constant integer expression. The value is instead
- *                     derived from the enum value of @ref name.
+ *                     derived from the enum value of @p name.
  * @param string Descriptive string assigned to the enum element name
  *
  * @code
