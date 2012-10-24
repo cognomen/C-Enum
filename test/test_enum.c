@@ -340,6 +340,73 @@ static char* test_Coreferenced(void)
     return 0;
 }
 
+/********************************/
+#define typedef_enum(_, _V, _S, _VS) \
+    _(TYPEDEF_ENUM_0) \
+
+static char* test_TypedefEnum(void)
+{
+    ENUM(typedef_enum);
+
+    typedef enum typedef_enum typedef_enum;
+    typedef_enum t = TYPEDEF_ENUM_0;
+
+    mu_assert("test_TypedefEnum: ZEROTH element not equal to 0",
+              t == TYPEDEF_ENUM_0);
+
+    return 0;
+}
+
+/********************************/
+#define TYPEDEF_FPTR(_, _V, _S, _VS) \
+    _V(FPTR_1, 1) \
+    _(FPTR_2) \
+
+ENUM(TYPEDEF_FPTR);
+
+static enum TYPEDEF_FPTR IdentityFunction(enum TYPEDEF_FPTR e)
+{
+    return e;
+}
+
+static char* test_TypedefFunctionPtr(void)
+{
+    ENUM(TYPEDEF_FPTR);
+
+    /* Standard workaround for MACRO function vs fptr interpretation problem */
+    typedef enum TYPEDEF_FPTR typedef_fptr_t;
+    typedef typedef_fptr_t (*typedef_fptr_f) (enum TYPEDEF_FPTR e);
+
+    typedef_fptr_f f = (typedef_fptr_f) &IdentityFunction;
+
+    mu_assert("test_TypedefFunctionPtr: Function return not equal to Function argument",
+              f(FPTR_1) == FPTR_1);
+
+    return 0;
+}
+
+/***********************************
+ * ENUM_T tests
+ ***********************************/
+
+#define AUTO_T(_, _V, _S, _VS) \
+    _(AUTO_ZERO) \
+
+/**
+ * Ensure the first value of an auto enum is zero.
+ */
+static char* test_T_AutoZero(void)
+{
+    ENUM_T(AUTO_T, auto_t);
+
+    auto_t a = AUTO_ZERO;
+
+    mu_assert("test_T_AutoZero: ZEROTH element not equal to ZERO",
+              a == AUTO_ZERO);
+
+    return 0;
+}
+
 
 /***********************************
  * ENUM_IMPL tests
@@ -541,6 +608,14 @@ char* test_enum(void)
     //mu_run_test(test_ValueAbuse);
 
     mu_run_test(test_Coreferenced);
+
+    mu_run_test(test_TypedefEnum);
+    mu_run_test(test_TypedefFunctionPtr);
+
+    /*
+     * ENUM_T tests
+     */
+    mu_run_test(test_T_AutoZero);
 
     /*
      * ENUM_IMPL tests

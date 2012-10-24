@@ -103,6 +103,48 @@
     } \
 
 /**
+ * Declares an enum @p e and typedef @p t.
+ *
+ * @see ENUM
+ *
+ * @param e A non-homogeneous list of @ref ENUM_AS_NAME, @ref
+ *          ENUM_AS_NAME_VALUE, @ref ENUM_AS_NAME_STRING or @ref
+ *          ENUM_AS_NAME_VALUE_STRING tuples.
+ *          Must not contain an element <i>e</i>_IMPL.
+ *
+ * @param t A typedef name for enum @p e.
+ *
+ * @code
+ * #define SHAPE_POINTS(_, _V, _S, _VS) \
+ *     _V(POINT, 1) \
+ *     _(LINE) \
+ *     _S(TRIANGLE, "Sides of a Triangle") \
+ *     _V(PENTAGON, 5) \
+ *     _VS(OCTAGON, 8, "Sides of an Octagon") \
+ *
+ * ENUM_T(SHAPE_POINTS, Shape_t);
+ * 
+ * Shape_t points = TETRAGON;
+ *
+ * switch (points)
+ * {
+ *     case TRIANGLE:
+ *         printf("A Triangle\n");
+ *         break;
+ *     case TETRAGON:
+ *         printf("A Tetragon\n");
+ *         break;
+ *     default:
+ *         printf("Unknown Shape");
+ * }
+ * @endcode
+ *
+ */
+#define ENUM_T(e, t) \
+    ENUM(e); \
+    typedef enum e t \
+
+/**
  * Allocates data table for the enum @p e.
  *
  * A parameterized X-Macro. It accepts a list of macro instances
